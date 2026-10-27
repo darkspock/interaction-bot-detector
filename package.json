@@ -1,0 +1,24 @@
+{
+  "name": "interaction-bot-detector",
+  "version": "0.1.0",
+  "description": "Tells human mouse and keyboard use apart from bots and AI agents, with an optional button trap",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "e2e": "node scripts/e2e-bots.js",
+    "demo": "node scripts/serve.js",
+    "test:e2e": "node --test test/e2e/*.test.js",
+    "build:static": "node scripts/build-static.js"
+  },
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  },
+  "exports": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darkspock/interaction-bot-detector.git"
+  },
+  "homepage": "https://juanmacias.com/botdetector/"
+}

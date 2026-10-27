@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up with trap</title>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<main>
+  <section class="zone">
+    <nav><a href="index.html">Edit profile</a><a href="signup.html" aria-current="page">Sign up</a><a href="https://github.com/darkspock/interaction-bot-detector">GitHub</a></nav>
+    <h1>Create your account</h1>
+    <p>It only takes a minute.</p>
+
+    <form class="card" id="signup" autocomplete="off">
+      <label class="field"><span>Full name</span>
+        <input type="text" name="name" required></label>
+      <div class="row">
+        <label class="field"><span>Email</span>
+          <input type="email" name="email" required></label>
+        <label class="field"><span>Password</span>
+          <input type="password" name="password" minlength="8" required autocomplete="new-password"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>Country</span>
+          <select name="country" required>
+            <option value="">Choose a country</option>
+            <option>Spain</option><option>Portugal</option><option>France</option><option>Italy</option>
+            <option>Mexico</option><option>Argentina</option><option>Colombia</option><option>Chile</option>
+            <option>Peru</option><option>Other</option>
+          </select></label>
+        <label class="field"><span>Date of birth</span>
+          <input type="date" name="birthdate" required></label>
+      </div>
+      <fieldset>
+        <legend>Account type</legend>
+        <div class="choices">
+          <label class="check"><input type="radio" name="kind" value="personal" required> Personal</label>
+          <label class="check"><input type="radio" name="kind" value="company"> Business</label>
+          <label class="check"><input type="radio" name="kind" value="freelance"> Freelancer</label>
+        </div>
+      </fieldset>
+      <label class="field"><span>How did you hear about us?</span>
+        <select name="source">
+          <option value="">Prefer not to say</option>
+          <option>Search engine</option><option>Social media</option><option>Recommendation</option>
+          <option>Press</option><option>Event</option>
+        </select></label>
+      <label class="check"><input type="checkbox" name="terms" required> I accept the terms of use and the privacy policy</label>
+      <label class="check"><input type="checkbox" name="newsletter"> Send me news by email</label>
+      <p class="notice" id="late-notice" hidden>Check that your email is correct: you will use it to sign in.</p>
+      <div class="buttons">
+        <button type="reset" class="btn">Clear</button>
+        <button type="submit" class="btn primary" id="accept">Accept</button>
+      </div>
+    </form>
+  </section>
+  <aside></aside>
+</main>
+<script type="module">
+  import { createDetector, createTrap } from '../src/index.js';
+  import { mountPanel } from './panel.js';
+  import { wireForm, submissions, formState } from './forms.js';
+
+  const form = document.getElementById('signup');
+  const detector = createDetector().start();
+  const { send } = wireForm(form, {
+    detector,
+    endpoint: '/api/signup',
+    success: { title: 'Account created', text: 'You can now sign in with your email.' },
+  });
+  // Everyone who reaches the button sees a notice appear that pushes it down.
+  // Clicking where it was after approaching it proves nothing (people in a
+  // hurry do it too). Clicking there blindly, or chasing it at inhuman speed,
+  // does: the form is then sent with that proof in the trace and the server
+  // answers with an error.
+  const notice = document.getElementById('late-notice');
+  const trap = createTrap(document.getElementById('accept'), {
+    detector,
+    trigger: 'approach',
+    displace: () => { notice.hidden = false; return () => { notice.hidden = true; }; },
+    onEvidence: e => { if (e.kind === 'fast-retarget' || e.kind === 'decoy-click') send(); },
+  }).start();
+  const received = [];
+  for (const b of form.querySelectorAll('button')) b.addEventListener('click', () => received.push(b.textContent));
+  Object.assign(window, { detector, trap, received, submissions, formState }); // for the e2e tests
+  mountPanel(document.querySelector('aside'), { detector, trap, trapLabel: 'Accept', received, submissions });
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trap with swapped buttons</title>
+<style>
+  body { margin: 0; font: 16px system-ui; }
+  .buttons { width: 200px; margin: 150px auto; display: grid; gap: 8px; }
+  button { height: 44px; }
+</style>
+</head>
+<body>
+<!-- A deliberately poor displacement: when "Save" moves, "Cancel" takes
+     exactly its spot. The trap must cover it with a decoy. -->
+<div class="buttons">
+  <button type="button" id="save">Save</button>
+  <button type="button" id="cancel">Cancel</button>
+</div>
+<script type="module">
+  import { createDetector, createTrap } from '../../src/index.js';
+
+  const detector = createDetector().start();
+  const save = document.getElementById('save');
+  const trap = createTrap(save, {
+    detector,
+    trigger: 'approach',
+    decoyMs: 1500,
+    displace: () => { save.parentNode.append(save); },
+  }).start();
+  const received = [];
+  for (const b of document.querySelectorAll('button')) b.addEventListener('click', () => received.push(b.textContent));
+  Object.assign(window, { detector, trap, received });
+</script>
+</body>
+</html>

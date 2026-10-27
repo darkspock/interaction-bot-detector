@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trap in jump mode</title>
+<style>
+  body { margin: 0; font: 16px system-ui; }
+  form { width: 420px; margin: 120px auto; display: grid; gap: 16px; }
+  .buttons { display: flex; gap: 10px; justify-content: flex-end; }
+</style>
+</head>
+<body>
+<!-- Minimal page to test the trap's default mode ('jump'). -->
+<form id="f">
+  <select name="timezone"><option>Europe/Madrid</option><option>Europe/Lisbon</option></select>
+  <div class="buttons">
+    <button type="button">Cancel</button>
+    <button type="button" id="save">Save</button>
+  </div>
+</form>
+<script type="module">
+  import { createDetector, createTrap } from '../../src/index.js';
+
+  const detector = createDetector().start();
+  const trap = createTrap(document.getElementById('save'), { detector }).start();
+  const received = [];
+  for (const b of document.querySelectorAll('button')) b.addEventListener('click', () => received.push(b.textContent));
+  Object.assign(window, { detector, trap, received });
+</script>
+</body>
+</html>

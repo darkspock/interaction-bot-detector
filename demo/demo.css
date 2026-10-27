@@ -1,0 +1,89 @@
+/* Styles shared by the demos. */
+:root {
+  --bg: #f6f6f4; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6b66; --line: #e2e2dc;
+  --human: #1f7a4d; --bot: #b3261e; --unsure: #a86b00; --trail: rgba(40, 90, 200, .55);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161615; --panel: #20201e; --ink: #ecece8; --muted: #a0a09a; --line: #34342f;
+    --human: #5cc48f; --bot: #f08078; --unsure: #e4b04a; --trail: rgba(120, 160, 255, .6); }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, sans-serif; }
+canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+main { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 380px; min-height: 100vh; }
+.zone { position: relative; padding: 24px; }
+.zone h1 { margin: 0 0 4px; font-size: 20px; }
+.zone p { margin: 0; color: var(--muted); max-width: 52ch; }
+nav { display: flex; gap: 14px; margin-bottom: 18px; font-size: 14px; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a[aria-current] { color: var(--ink); font-weight: 600; }
+[data-bot-trap="decoy"] { outline: 2px dashed var(--bot); outline-offset: -2px; border-radius: 8px; }
+.trap { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+.trap strong { font-weight: 600; }
+aside { background: var(--panel); border-left: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.verdict { font-size: 26px; font-weight: 650; }
+.verdict[data-v="human"] { color: var(--human); }
+.verdict[data-v="bot"] { color: var(--bot); }
+.verdict[data-v="uncertain"], .verdict[data-v="insufficient-data"] { color: var(--unsure); }
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar > div { height: 100%; width: 0; background: var(--ink); transition: width .2s; }
+.small { color: var(--muted); font-size: 13px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td { padding: 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:last-child { text-align: right; font-variant-numeric: tabular-nums; padding-left: 8px; white-space: nowrap; }
+tr.on td:first-child { font-weight: 600; }
+tr.on td:last-child { color: var(--bot); }
+.actions { display: flex; gap: 8px; }
+.actions button { flex: 1; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+@media (max-width: 800px) {
+  main { grid-template-columns: 1fr; }
+  .zone { min-height: 560px; padding: 16px; }
+  aside { border-left: 0; border-top: 1px solid var(--line); padding: 16px; }
+}
+
+/* Forms */
+.card { max-width: 560px; margin-top: 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; }
+.field > span, legend { font-size: 13px; font-weight: 600; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+input[type=text], input[type=email], input[type=password], input[type=date], select, textarea {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+.choices { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
+.check input { margin-top: 3px; }
+.photo { display: flex; align-items: center; gap: 14px; }
+.avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--line); display: grid; place-items: center; font-weight: 650; }
+.buttons { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; padding-top: 4px; }
+.btn { font: inherit; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--ink); color: var(--panel); border-color: var(--ink); font-weight: 600; }
+.btn:disabled { opacity: .6; cursor: progress; }
+/* Late notice that pushes the buttons down: at least as tall as a button, so
+   whoever clicks where the button was hits the text. */
+.notice { margin: 0; min-height: 56px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--muted); font-size: 14px; display: flex; align-items: center; }
+.notice[hidden] { display: none; }
+
+/* Modal with the submission result */
+.modal { border: 1px solid var(--line); border-radius: 14px; padding: 28px 28px 22px; width: min(380px, calc(100vw - 32px));
+  background: var(--panel); color: var(--ink); text-align: center; }
+.modal::backdrop { background: rgba(0, 0, 0, .35); }
+.modal h2 { margin: 12px 0 6px; font-size: 19px; }
+.modal p { margin: 0 0 20px; color: var(--muted); }
+.modal .btn { width: 100%; }
+.modal-icon { width: 44px; height: 44px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center;
+  font-size: 22px; font-weight: 700; color: var(--panel); }
+.modal[data-state="ok"] .modal-icon { background: var(--human); }
+.modal[data-state="error"] .modal-icon { background: var(--bot); }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+/* Error page a bot sees */
+.error-body { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
+main.error-page { display: block; min-height: 0; max-width: 460px; text-align: center; }
+.error-code { margin: 0; font-size: 72px; font-weight: 750; line-height: 1; letter-spacing: -0.02em; }
+.error-page h1 { margin: 12px 0 8px; font-size: 22px; }
+.error-message { margin: 0 0 24px; color: var(--muted); }
+.error-page .btn { text-decoration: none; display: inline-block; }
+.error-ref { margin: 28px 0 0; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }

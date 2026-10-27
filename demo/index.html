@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile with trap</title>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<main>
+  <section class="zone">
+    <nav><a href="index.html" aria-current="page">Edit profile</a><a href="signup.html">Sign up</a><a href="https://github.com/darkspock/interaction-bot-detector">GitHub</a></nav>
+    <h1>Edit profile</h1>
+    <p>Update your details and preferences.</p>
+
+    <form class="card" id="profile">
+      <div class="photo">
+        <div class="avatar" aria-hidden="true">JD</div>
+        <button type="button" class="btn">Change photo</button>
+      </div>
+      <div class="row">
+        <label class="field"><span>Display name</span>
+          <input type="text" name="displayName" value="Jane Doe" required></label>
+        <label class="field"><span>Job title</span>
+          <input type="text" name="title" value="Senior associate"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>Department</span>
+          <select name="department">
+            <option>Corporate</option><option selected>Litigation</option><option>Employment</option>
+            <option>Tax</option><option>Technology</option><option>Administration</option>
+          </select></label>
+        <label class="field"><span>Office</span>
+          <select name="office">
+            <option selected>Madrid</option><option>Barcelona</option><option>Valencia</option>
+            <option>Lisbon</option><option>Mexico City</option><option>Bogotá</option>
+          </select></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>App language</span>
+          <select name="language">
+            <option selected>English</option><option>Español</option><option>Português</option><option>Català</option>
+          </select></label>
+        <label class="field"><span>Time zone</span>
+          <select name="timezone">
+            <option selected>Europe/Madrid (UTC+1)</option><option>Europe/Lisbon (UTC+0)</option>
+            <option>America/Mexico City (UTC−6)</option><option>America/Bogotá (UTC−5)</option>
+          </select></label>
+      </div>
+      <label class="field"><span>Bio</span>
+        <textarea name="bio">Civil and commercial litigation. Twelve years of practice.</textarea></label>
+      <fieldset>
+        <legend>Who can see your profile</legend>
+        <div class="choices">
+          <label class="check"><input type="radio" name="visibility" value="all"> Everyone in the company</label>
+          <label class="check"><input type="radio" name="visibility" value="team" checked> Only my team</label>
+          <label class="check"><input type="radio" name="visibility" value="private"> Nobody</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Notifications</legend>
+        <label class="check"><input type="checkbox" name="notifyEmail" checked> By email</label>
+        <label class="check"><input type="checkbox" name="notifyMobile"> On my phone</label>
+      </fieldset>
+      <p class="notice" id="late-notice" hidden>Changes to your profile will be visible to the people you chose under “Who can see your profile”.</p>
+      <div class="buttons">
+        <button type="button" class="btn">Preview</button>
+        <button type="reset" class="btn">Cancel</button>
+        <button type="submit" class="btn primary" id="save">Save changes</button>
+      </div>
+    </form>
+  </section>
+  <aside></aside>
+</main>
+<script type="module">
+  import { createDetector, createTrap } from '../src/index.js';
+  import { mountPanel } from './panel.js';
+  import { wireForm, submissions, formState } from './forms.js';
+
+  const form = document.getElementById('profile');
+  const detector = createDetector().start();
+  const { send } = wireForm(form, {
+    detector,
+    endpoint: '/api/profile',
+    success: { title: 'Changes saved', text: 'Your profile has been updated.' },
+  });
+  // Everyone who reaches the button sees a notice appear that pushes it down.
+  // Clicking where it was after approaching it proves nothing (people in a
+  // hurry do it too). Clicking there blindly, or chasing it at inhuman speed,
+  // does: the form is then sent with that proof in the trace and the server
+  // answers with an error.
+  const notice = document.getElementById('late-notice');
+  const trap = createTrap(document.getElementById('save'), {
+    detector,
+    trigger: 'approach',
+    displace: () => { notice.hidden = false; return () => { notice.hidden = true; }; },
+    onEvidence: e => { if (e.kind === 'fast-retarget' || e.kind === 'decoy-click') send(); },
+  }).start();
+  const received = [];
+  for (const b of form.querySelectorAll('button')) b.addEventListener('click', () => received.push(b.textContent));
+  Object.assign(window, { detector, trap, received, submissions, formState }); // for the e2e tests
+  mountPanel(document.querySelector('aside'), { detector, trap, trapLabel: 'Save changes', received, submissions });
+</script>
+</body>
+</html>
