@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaction bot detector</title>
+<meta name="description" content="A JavaScript library that tells people apart from bots and AI agents by how they use the mouse and keyboard, with a trap for important buttons. Live demo and source code.">
+<meta property="og:title" content="Interaction bot detector">
+<meta property="og:description" content="Tells people apart from bots and AI agents by how they use the mouse and keyboard. Try the live demo.">
+<meta property="og:url" content="https://juanmacias.com/botdetector/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@juanmacias">
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --ink: #1d1d1b; --muted: #62625d; --line: #e2e2dc; --accent: #1f5fd6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161615; --panel: #20201e; --ink: #ecece8; --muted: #a0a09a; --line: #34342f; --accent: #8ab4ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 64px 0 28px; }
+  .eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  h1 { font-size: clamp(32px, 6vw, 48px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+  .lead { font-size: 20px; color: var(--muted); margin: 0 0 28px; max-width: 40em; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 16px; border: 1px solid var(--line); color: var(--ink); background: var(--panel); }
+  .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+  section { padding: 28px 0; }
+  h2 { font-size: 24px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  p { margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 8px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .card h3 { font-size: 16px; margin: 0 0 6px; }
+  .card p { margin: 0; font-size: 15px; color: var(--muted); }
+  ol.steps { margin: 0; padding-left: 22px; }
+  ol.steps li { margin-bottom: 8px; }
+  .note { font-size: 15px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 14px; }
+  .demo { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  .demo-bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .tabs { display: flex; gap: 6px; }
+  .tabs button { font: inherit; font-size: 15px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .demo-bar a { font-size: 15px; }
+  iframe { display: block; width: 100%; height: 1250px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+  .hint { font-size: 15px; color: var(--muted); margin: 10px 0 0; }
+  footer { margin-top: 56px; background: #000; color: #fff; text-align: center; padding: 16px; font-size: 14px; }
+  footer a { color: #ffd400; text-decoration: none; font-weight: 600; }
+  footer a:hover { color: #000; background: #ffd400; }
+  @media (max-width: 640px) {
+    header { padding: 40px 0 20px; }
+    .lead { font-size: 18px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Open-source JavaScript library</p>
+    <h1>Interaction bot detector</h1>
+    <p class="lead">Tells people apart from bots and AI agents by how they use the mouse and keyboard, and catches automation that clicks without looking.</p>
+    <div class="ctas">
+      <a class="btn primary" href="https://github.com/darkspock/interaction-bot-detector">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Source on GitHub
+      </a>
+      <a class="btn" href="#demo">Try the demo</a>
+    </div>
+  </header>
+
+  <section>
+    <h2>What it is</h2>
+    <p>Bots and AI agents that use a browser act like programs. They place the cursor right on a button instead of moving it there, release clicks within milliseconds, draw perfectly straight lines and type faster than any hand. This library records how a page is used and turns those traits into a verdict: <em>human</em>, <em>bot</em>, <em>uncertain</em> or <em>not enough data</em>, with the reasons behind it.</p>
+    <p>It has no dependencies and runs in the browser and in Node. From the keyboard it stores timings only, never which keys were pressed.</p>
+  </section>
+
+  <section>
+    <h2>What it catches</h2>
+    <div class="grid">
+      <div class="card"><h3>Jumps and instant clicks</h3><p>A cursor that appears on a button with no path to it, and clicks released in under 10 ms, as Playwright, Puppeteer and screenshot-based AI agents do.</p></div>
+      <div class="card"><h3>Machine-made movement</h3><p>Perfectly straight strokes at constant speed, and clicks on the exact centre of the element.</p></div>
+      <div class="card"><h3>Machine typing</h3><p>Keys held for a fraction of a millisecond, typing faster than a person, and fields filled from code with nothing human anywhere in the visit.</p></div>
+      <div class="card"><h3>A trap for one button</h3><p>At the moment someone is about to click it, the button moves. A person sees the change and aims again; a bot clicks where it was, or chases it faster than anyone can react.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How you use it</h2>
+    <ol class="steps">
+      <li>Start a detector when the page loads and send its trace with the form.</li>
+      <li>On your server, analyze the trace and decide. A bot never learns it was detected: it gets an ordinary HTTP error.</li>
+      <li>Optionally, put the trap on your most important button, such as Save, Pay or Accept.</li>
+    </ol>
+    <p class="note">It catches automation that behaves like a program. It does not catch a bot built to imitate a person, and its thresholds still need checking against real users. The <a href="https://github.com/darkspock/interaction-bot-detector/blob/main/docs/how-it-works.md">documentation</a> explains every signal and every limitation.</p>
+  </section>
+</div>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>Live demo</h2>
+    <p>Use the form as you normally would, then try the same with Playwright or an AI agent. The panel shows the verdict and the signals as you go. When you reach the main button, a notice appears and pushes it down: that is the trap.</p>
+  </div>
+  <div class="demo">
+    <div class="demo-bar">
+      <div class="tabs" role="tablist" aria-label="Demo form">
+        <button type="button" role="tab" aria-selected="true" data-src="demo/index.html">Edit profile</button>
+        <button type="button" role="tab" aria-selected="false" data-src="demo/signup.html">Sign up</button>
+      </div>
+      <a href="demo/" id="full">Open full screen</a>
+    </div>
+    <iframe id="frame" src="demo/index.html" title="Interaction bot detector demo"></iframe>
+    <p class="hint">Your movements stay in your browser: this copy of the demo sends nothing anywhere.</p>
+  </div>
+</section>
+
+<footer>&copy; 2026 Juan Macias &middot; <a href="https://x.com/juanmacias" rel="noopener">@juanmacias on X</a></footer>
+
+<script>
+  const frame = document.getElementById('frame');
+  const full = document.getElementById('full');
+  const tabs = [...document.querySelectorAll('.tabs button')];
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => {
+      for (const t of tabs) t.setAttribute('aria-selected', String(t === tab));
+      frame.src = tab.dataset.src;
+      full.href = tab.dataset.src;
+    });
+  }
+  // The demo is on this site, so its height can be read: the frame grows with
+  // its content and the page never scrolls inside the frame.
+  setInterval(() => {
+    try {
+      const h = frame.contentDocument?.documentElement.scrollHeight;
+      if (h) frame.style.height = `${Math.max(h, 480)}px`;
+    } catch { /* not loaded yet */ }
+  }, 500);
+</script>
+</body>
+</html>

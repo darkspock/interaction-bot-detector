@@ -86,7 +86,8 @@ npm run e2e                  # compares automation strategies against the demo
 |---|---|
 | `src/` | The library: `recorder.js` (recording), `analyzer.js` (signals and verdict), `trap.js` (the button trap), `native-ui.js` (recognizes dropdowns and date pickers, whose popups hide the cursor) and `index.js` (exports) |
 | `demo/` | The two demo forms, the side panel, the form submission code and `decide.js`, the complete version of the server example in the usage guide |
-| `scripts/` | `serve.js` (local demo server), `build-static.js` (static copy for a web server) and the browser comparison script |
+| `site/` | The landing page of the hosted demo, which embeds it |
+| `scripts/` | `serve.js` (local demo server), `build-static.js` (static copy with the landing page, for a web server) and the browser comparison script |
 | `test/` | Unit tests with synthetic and real traces; `test/e2e/` has the browser tests |
 
 ## License
